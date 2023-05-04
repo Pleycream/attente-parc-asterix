@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temps d'attente - Parc Astérix</title>
+    <link href="https://fonts.googleapis.com/css?family=Bangers&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        /* Styles pour la section météo */
+        #weather-section {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+/* Styles pour la liste des dates */
+.date-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    justify-items: center;
+    align-items: center;
+    list-style-type: none;
+    padding: 0;
+}
+
+.date-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+}
+
+.date-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+}
+
+.date-text {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>Parc Astérix - Temps d'attente</h1>
+    </nav>
+    <section id="park-hours">
+        <h2>Horaires du parc aujourd'hui</h2>
+        <p>Le parc est ouvert de 10h00 à 19h00.</p>
+    </section>
+    <main>
+        <h2 class="animate__animated animate__fadeIn">Temps d'attente actuel</h2>
+        <div id="ride-list"></div>
+        <div id="featured-ride"></div>
+        <div id="non-official">
+            Ce site n'est pas un site officiel du Parc Astérix.
+        </div>
+        <div id="non-official">
+           Powered by Queue-Times.com
+        </div>
+        <section id="weather-section">
+            <h2>Météo</h2>
+            <div id="meteo"></div>
+        </section>
+    </main>
+    <section id="promo-group">
+        <h2>Découvrez notre groupe !</h2>
+        <p>
+            Rejoignez notre groupe de fans du Parc Astérix pour partager vos expériences, astuces et conseils pour profiter au maximum de vos visites au parc.
+        </p>
+        <a href="https://www.facebook.com/groups/1848062325233643/" target="_blank" rel="noopener noreferrer">Rejoignez-nous sur Facebook</a>
+    </section>
+    <script>
+        // Ajoutez votre code JavaScript ici pour charger le contenu de la météo
+fetch('internetasterix.htm')
+    .then(response => response.text())
+    .then(data => {
+        const parser = new DOMParser();
+        const parsedData = parser.parseFromString(data, 'text/html');
+        
+        const daysOfWeek = parsedData.querySelectorAll('td:nth-child(2)');
+        const dates = parsedData.querySelectorAll('td:nth-child(3)');
+        const backgrounds = parsedData.querySelectorAll('td:nth-child(6)');
+
+        const dateList = document.createElement('ul');
+        dateList.className = 'date-list';
+
+        daysOfWeek.forEach((day, index) => {
+            const dateItem = document.createElement('li');
+            dateItem.className = 'date-item';
+
+            const dayText = document.createElement('span');
+            dayText.className = 'day-text';
+            dayText.innerText = day.innerText;
+
+            const dateText = document.createElement('span');
+            dateText.className = 'date-text';
+            dateText.innerText = dates[index].innerText;
+
+            const backgroundColor = backgrounds[index].style.background;
+            dateText.style.backgroundColor = backgroundColor;
+
+            // Appliquer la couleur de fond aux cases de date
+            dateItem.style.backgroundColor = backgroundColor;
+
+            dateItem.appendChild(dayText);
+            dateItem.appendChild(dateText);
+            dateList.appendChild(dateItem);
+        });
+
+        document.getElementById('meteo').appendChild(dateList);
+    })
+    .catch(error => {
+        console.error('Erreur lors du chargement de la météo:', error);
+    });
+   </script>
+    <script src="scripts.js"></script>
+</body>
+</html>
+
